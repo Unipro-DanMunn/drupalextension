@@ -378,7 +378,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Creates one or more languages.
    *
-   * @Given the/these (following )languages are available:
+   * @Given the/these (following )language(s) are/is available:
    *
    * Provide language data in the following format:
    *

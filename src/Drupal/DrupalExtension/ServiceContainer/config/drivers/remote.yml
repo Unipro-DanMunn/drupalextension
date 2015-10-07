@@ -1,0 +1,21 @@
+parameters:
+  drupal.driver.remote.class: Drupal\Driver\RemoteDriver
+
+  # Random generator.
+  drupal.random.class: Drupal\Component\Utility\Random
+
+services:
+  drupal.driver.random:
+    class: %drupal.random.class%
+  drupal.driver.remote:
+    class: %drupal.driver.remote.class%
+    arguments:
+      # Read the mink URL for base URL.
+      - %mink.base_url%
+      - %drupal.driver.remote.login_username%
+      - %drupal.driver.remote.login_password%
+      - %drupal.driver.remote.request_cookie%
+      - %drupal.driver.remote.remote_client%
+      - @drupal.driver.random
+    tags:
+      - { name: drupal.driver, alias: remote }

@@ -68,6 +68,7 @@ class DrupalExtension implements ExtensionInterface {
     $this->loadBlackbox($loader, $config);
     $this->loadDrupal($loader, $container, $config);
     $this->loadDrush($loader, $container, $config);
+    $this->loadRemote($loader, $container, $config);
   }
 
   /**
@@ -155,6 +156,15 @@ class DrupalExtension implements ExtensionInterface {
             scalarNode('global_options')->end()->
           end()->
         end()->
+        arrayNode('remote')->
+          children()->
+            scalarNode('login_username')->end()->
+            scalarNode('login_password')->end()->
+            scalarNode('request_cookie')->end()->
+            scalarNode('remote_client')->end()->
+            scalarNode('custom_formatter_class')->end()->
+          end()->
+        end()->
         // Subcontext paths.
         arrayNode('subcontexts')->
           info(
@@ -231,6 +241,29 @@ class DrupalExtension implements ExtensionInterface {
 
       $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
       $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
+
+      // Set global arguments.
+      $this->setDrushOptions($container, $config);
+    }
+  }
+
+  /**
+   * Load the Remote driver.
+   */
+  private function loadRemote(FileLoader $loader, ContainerBuilder $container, array $config) {
+    if (isset($config['remote'])) {
+      $loader->load('drivers/remote.yml');
+      $config['remote']['login_username'] = isset($config['remote']['login_username']) ? $config['remote']['login_username'] : '';
+      $container->setParameter('drupal.driver.remote.login_username', $config['remote']['login_username']);
+
+      $config['remote']['login_password'] = isset($config['remote']['login_password']) ? $config['remote']['login_password'] : '';
+      $container->setParameter('drupal.driver.remote.login_password', $config['remote']['login_password']);
+
+      $config['remote']['request_cookie'] = isset($config['remote']['request_cookie']) ? $config['remote']['request_cookie'] : NULL;
+      $container->setParameter('drupal.driver.remote.request_cookie', $config['remote']['request_cookie']);
+
+      $config['remote']['remote_client'] = isset($config['remote']['remote_client']) ? $config['remote']['remote_client'] : NULL;
+      $container->setParameter('drupal.driver.remote.remote_client', $config['remote']['remote_client']);
 
       // Set global arguments.
       $this->setDrushOptions($container, $config);
